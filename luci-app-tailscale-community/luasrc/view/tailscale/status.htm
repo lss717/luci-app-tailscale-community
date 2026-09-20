@@ -1,0 +1,218 @@
+<%+header%>
+
+<style type="text/css">
+	.ts-ok   { color: #1a7f1a; font-weight: bold; }
+	.ts-off  { color: #c0392b; font-weight: bold; }
+	.ts-info { width: 100%; }
+	.ts-info td { padding: 3px 10px; vertical-align: top; }
+	.ts-peers { width: 100%; border-collapse: collapse; margin-top: 8px; }
+	.ts-peers th, .ts-peers td { border: 1px solid #ccc; padding: 4px 6px; font-size: 12px; text-align: left; }
+	.ts-peers th { background: #f2f2f2; }
+</style>
+
+<%
+local translate = require("luci.i18n").translate
+local ubus = require "ubus"
+local st = { peers = {} }
+local conn = ubus.connect()
+if conn then
+	local ok, r = pcall(function()
+		return conn:call("tailscale", "get_status", {})
+	end)
+	if ok and type(r) == "table" then
+		st = r
+	end
+	conn:close()
+end
+if type(st.peers) ~= "table" then
+	st.peers = {}
+end
+
+local function h(v)
+	return tostring(v == nil and "" or v)
+		:gsub("&", "&amp;")
+		:gsub("<", "&lt;")
+		:gsub(">", "&gt;")
+		:gsub('"', "&quot;")
+end
+
+local function flat(v)
+	if type(v) == "table" then
+		local t = {}
+		for _, x in ipairs(v) do
+			t[#t + 1] = tostring(x)
+		end
+		return table.concat(t, "; ")
+	end
+	return v
+end
+
+local function status_html(s)
+	if s == "running" then
+		return '<span class="ts-ok">' .. translate("Running") .. '</span>'
+	elseif s == "logout" then
+		return '<span class="ts-off">' .. translate("Logged out") .. '</span>'
+	elseif s == "not_installed" then
+		return '<span class="ts-off">' .. translate("Not installed") .. '</span>'
+	end
+	return '<span class="ts-off">' .. translate("Not running") .. '</span>'
+end
+%>
+
+<h2 name="content">Tailscale</h2>
+
+<div class="cbi-map">
+	<fieldset class="cbi-section">
+		<legend><%:Node Status%></legend>
+		<table class="ts-info">
+			<tr><td><%:Status%></td><td id="ts_status"><%=status_html(st.status)%></td></tr>
+			<tr><td><%:Version%></td><td id="ts_version"><%=h(st.version)%></td></tr>
+			<tr><td>TUN</td><td id="ts_tun"><%=h(tostring(st.TUNMode))%></td></tr>
+			<tr><td>Tailscale IPv4</td><td id="ts_ipv4"><%=h(st.ipv4)%></td></tr>
+			<tr><td>Tailscale IPv6</td><td id="ts_ipv6"><%=h(st.ipv6 or "-")%></td></tr>
+			<tr><td>Tailnet</td><td id="ts_domain"><%=h(st.domain_name)%></td></tr>
+			<tr><td><%:Health%></td><td id="ts_health"><%=h(flat(st.health))%></td></tr>
+		</table>
+
+		<div style="margin-top: 10px;">
+			<input type="button" class="cbi-button cbi-button-apply" value="<%:Login%>" onclick="tsLogin()" />
+			<input type="button" class="cbi-button cbi-button-reset" value="<%:Logout%>" onclick="tsLogout()" />
+			<input type="button" class="cbi-button" value="<%:Auto Configure Firewall%>" onclick="tsFirewall()" />
+		</div>
+	</fieldset>
+
+	<fieldset class="cbi-section">
+		<legend><%:Peer List%></legend>
+		<table class="ts-peers">
+			<thead>
+				<tr><th><%:Hostname%></th><th>IP</th><th><%:OS%></th><th><%:Status%></th><th><%:Connection%></th></tr>
+			</thead>
+			<tbody id="ts_peer_rows">
+			<%
+			local n = 0
+			for _, p in pairs(st.peers) do
+				n = n + 1
+			%>
+				<tr>
+					<td><%=h(p.hostname)%></td>
+					<td><%=h(p.ip and tostring(p.ip):gsub("<br>", " "))%></td>
+					<td><%=h(p.ostype)%></td>
+					<td><% if p.online then %><span class="ts-ok"><%:Online%></span><% else %><span class="ts-off"><%:Offline%></span><% end %></td>
+					<td><%=h(p.linkadress)%></td>
+				</tr>
+			<%
+			end
+			if n == 0 then
+			%>
+				<tr><td colspan="5"><em><%:No peers%></em></td></tr>
+			<%
+			end
+			%>
+			</tbody>
+		</table>
+	</fieldset>
+</div>
+
+<script type="text/javascript">//<![CDATA[
+	var tsToken = '<%=token%>';
+
+	function tsMsg(m) { window.alert(m); }
+
+	function tsPost(url, data, cb) {
+		(new XHR()).post(url, data, cb);
+	}
+
+	function tsParse(xhr) {
+		try { return JSON.parse(xhr.responseText); } catch (e) { return null; }
+	}
+
+	function tsLogin() {
+		var server = window.prompt('<%:Login server (leave empty for official Tailscale)%>', '');
+		if (server === null) return;
+		var key = window.prompt('<%:Auth Key (optional)%>', '');
+		if (key === null) return;
+		tsPost('<%=url("admin", "vpn", "tailscale", "login")%>',
+			{ token: tsToken, loginserver: server, authkey: key },
+			function(xhr) {
+				var r = tsParse(xhr);
+				if (r && r.url) {
+					window.open(r.url, '_blank');
+					tsMsg('<%:Login link obtained, please authorize in the new window.%>');
+				} else {
+					tsMsg((r && r.error) ? r.error : '<%:Failed to get login link%>');
+				}
+			});
+	}
+
+	function tsLogout() {
+		if (!window.confirm('<%:Are you sure you want to log out?%>')) return;
+		tsPost('<%=url("admin", "vpn", "tailscale", "logout")%>',
+			{ token: tsToken },
+			function(xhr) {
+				var r = tsParse(xhr);
+				if (r && r.error) {
+					tsMsg(r.error);
+				} else {
+					tsMsg('<%:Successfully logged out.%>');
+					window.setTimeout(function() { location.reload(); }, 1000);
+				}
+			});
+	}
+
+	function tsFirewall() {
+		tsPost('<%=url("admin", "vpn", "tailscale", "firewall")%>',
+			{ token: tsToken },
+			function(xhr) {
+				var r = tsParse(xhr);
+				if (r && r.error) {
+					tsMsg(r.error);
+				} else {
+					tsMsg((r && r.message) ? r.message : '<%:Firewall configuration applied%>');
+				}
+			});
+	}
+
+	function tsRenderPeers(peers) {
+		var rows = '';
+		for (var id in peers) {
+			var p = peers[id] || {};
+			var ip = p.ip ? String(p.ip).replace(/<br>/g, ' ') : '';
+			var online = p.online
+				? '<span class="ts-ok"><%:Online%></span>'
+				: '<span class="ts-off"><%:Offline%></span>';
+			rows += '<tr><td>' + (p.hostname || '') + '</td>'
+			     + '<td>' + ip + '</td>'
+			     + '<td>' + (p.ostype || '') + '</td>'
+			     + '<td>' + online + '</td>'
+			     + '<td>' + (p.linkadress || '') + '</td></tr>';
+		}
+		if (!rows) {
+			rows = '<tr><td colspan="5"><em><%:No peers%></em></td></tr>';
+		}
+		var tb = document.getElementById('ts_peer_rows');
+		if (tb) tb.innerHTML = rows;
+	}
+
+	XHR.poll(5, '<%=url("admin", "vpn", "tailscale", "status_json")%>', { token: tsToken }, function(xhr, data) {
+		if (!data) return;
+		var set = function(id, v) {
+			var e = document.getElementById(id);
+			if (e) e.innerHTML = v;
+		};
+		var sh;
+		if (data.status == 'running') sh = '<span class="ts-ok"><%:Running%></span>';
+		else if (data.status == 'logout') sh = '<span class="ts-off"><%:Logged out%></span>';
+		else if (data.status == 'not_installed') sh = '<span class="ts-off"><%:Not installed%></span>';
+		else sh = '<span class="ts-off"><%:Not running%></span>';
+
+		set('ts_status', sh);
+		set('ts_version', data.version || '');
+		set('ts_ipv4', data.ipv4 || '');
+		set('ts_ipv6', data.ipv6 || '-');
+		set('ts_domain', data.domain_name || '');
+		set('ts_health', Array.isArray(data.health) ? data.health.join('; ') : (data.health || ''));
+		tsRenderPeers(data.peers || {});
+	});
+//]]></script>
+
+<%+footer%>

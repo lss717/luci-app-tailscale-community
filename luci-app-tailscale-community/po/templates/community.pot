@@ -553,3 +553,111 @@ msgid ""
 "and enables Masquerading and MSS Clamping (MTU fix) to ensure stable "
 "connections."
 msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Running"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Logged out"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Not installed"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Not running"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Node Status"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Health"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Peer List"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Connection"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "No peers"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Login server (leave empty for official Tailscale)"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Auth Key (optional)"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Login link obtained, please authorize in the new window."
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Failed to get login link"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Firewall configuration applied"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "MagicDNS"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "State File"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "Log stdout"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "Log stderr"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "Tailscale daemon listening port"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "Must be in CIDR format, e.g. 192.168.31.0/24"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "After Save & Apply, settings are applied to tailscale by /etc/init.d/tailscale-settings."
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "Failed to connect to ubus"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "Failed to get Tailscale status"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "tailscale executable not found"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "Tailscale is already logged in and running"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "No login link within 30 seconds, see /tmp/tailscale-login.log"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "Settings"
+msgstr ""

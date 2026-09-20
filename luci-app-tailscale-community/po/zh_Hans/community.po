@@ -590,8 +590,113 @@ msgstr "并启用伪装和MSS钳制（MTU修复）功能，以确保连接稳定
 #~ msgid "Network Devices"
 #~ msgstr "网络设备"
 
-#~ msgid "Settings"
-#~ msgstr "设置"
-
 #~ msgid "Tailscale settings applied successfully."
 #~ msgstr "Tailscale 设置已成功应用。"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Running"
+msgstr "运行中"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Logged out"
+msgstr "未登录"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Not installed"
+msgstr "未安装"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Not running"
+msgstr "未运行"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Node Status"
+msgstr "节点状态"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Health"
+msgstr "健康"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Peer List"
+msgstr "节点列表"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Connection"
+msgstr "连接"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "No peers"
+msgstr "无节点"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Login server (leave empty for official Tailscale)"
+msgstr "登录服务器（留空使用 Tailscale 官方）"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Auth Key (optional)"
+msgstr "Auth Key（可留空）"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Login link obtained, please authorize in the new window."
+msgstr "已获取登录链接，请在新窗口完成授权。"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Failed to get login link"
+msgstr "获取登录链接失败"
+
+#: applications/luci-app-tailscale-community/luasrc/view/tailscale/status.htm
+msgid "Firewall configuration applied"
+msgstr "防火墙配置已应用"
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "MagicDNS"
+msgstr "MagicDNS"
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "State File"
+msgstr "状态文件"
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "Log stdout"
+msgstr "记录标准输出"
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "Log stderr"
+msgstr "记录标准错误"
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "Tailscale daemon listening port"
+msgstr "tailscaled 监听端口"
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "Must be in CIDR format, e.g. 192.168.31.0/24"
+msgstr "必须是 CIDR 格式，例如 192.168.31.0/24"
+
+#: applications/luci-app-tailscale-community/luasrc/model/cbi/tailscale/settings.lua
+msgid "After Save & Apply, settings are applied to tailscale by /etc/init.d/tailscale-settings."
+msgstr "保存并应用后，设置会由 /etc/init.d/tailscale-settings 应用到 tailscale。"
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "Failed to connect to ubus"
+msgstr "无法连接 ubus"
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "Failed to get Tailscale status"
+msgstr "获取 Tailscale 状态失败"
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "tailscale executable not found"
+msgstr "未找到 tailscale 可执行文件"
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "Tailscale is already logged in and running"
+msgstr "Tailscale 已登录并在运行"
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "No login link within 30 seconds, see /tmp/tailscale-login.log"
+msgstr "30 秒内未获取到登录链接，请查看 /tmp/tailscale-login.log"
+
+#: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
+msgid "Settings"
+msgstr "设置"
