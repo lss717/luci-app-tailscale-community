@@ -661,3 +661,15 @@ msgstr ""
 #: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
 msgid "Settings"
 msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/tailscale.lua
+msgid "Failed to log out"
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/tailscale.lua
+msgid "Tailscale firewall/interface configuration applied."
+msgstr ""
+
+#: applications/luci-app-tailscale-community/luasrc/model/tailscale.lua
+msgid "Tailscale firewall/interface already configured."
+msgstr ""

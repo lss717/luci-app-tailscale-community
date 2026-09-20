@@ -700,3 +700,15 @@ msgstr "30 秒内未获取到登录链接，请查看 /tmp/tailscale-login.log"
 #: applications/luci-app-tailscale-community/luasrc/controller/tailscale.lua
 msgid "Settings"
 msgstr "设置"
+
+#: applications/luci-app-tailscale-community/luasrc/model/tailscale.lua
+msgid "Failed to log out"
+msgstr "注销失败"
+
+#: applications/luci-app-tailscale-community/luasrc/model/tailscale.lua
+msgid "Tailscale firewall/interface configuration applied."
+msgstr "Tailscale 防火墙/接口配置已应用。"
+
+#: applications/luci-app-tailscale-community/luasrc/model/tailscale.lua
+msgid "Tailscale firewall/interface already configured."
+msgstr "Tailscale 防火墙/接口已配置。"

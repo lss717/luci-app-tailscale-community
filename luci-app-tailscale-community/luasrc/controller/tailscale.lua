@@ -2,7 +2,7 @@ module("luci.controller.tailscale", package.seeall)
 
 local http  = require "luci.http"
 local sys   = require "luci.sys"
-local jsonc = require "luci.jsonc"
+local ts    = require "luci.model.tailscale"
 local translate = require("luci.i18n").translate
 
 local function ts_bin()
@@ -18,22 +18,6 @@ local function shellquote(s)
 	return "'" .. tostring(s or ""):gsub("'", "'\\''") .. "'"
 end
 
-local function ubus_call(method, args)
-	local ubus = require "ubus"
-	local conn = ubus.connect()
-	if not conn then
-		return nil, translate("Failed to connect to ubus")
-	end
-	local ok, res = pcall(function()
-		return conn:call("tailscale", method, args or {})
-	end)
-	conn:close()
-	if not ok then
-		return nil, tostring(res)
-	end
-	return res
-end
-
 local function reply(res, err)
 	http.prepare_content("application/json")
 	if err then
@@ -44,6 +28,8 @@ local function reply(res, err)
 end
 
 function index()
+	-- Declared locally (not as a file-level upvalue): LuCI caches the
+	-- index() function as bytecode, which drops file-level upvalues.
 	local translate = require("luci.i18n").translate
 
 	if not nixio.fs.access("/etc/config/tailscale") then
@@ -63,34 +49,11 @@ function index()
 end
 
 function action_status()
-	local res, err = ubus_call("get_status")
-
-	if not res then
-		local bin = ts_bin()
-		if bin then
-			local out = sys.exec(bin .. " status --json 2>/dev/null")
-			local parsed = out and jsonc.parse(out)
-			if parsed then
-				local ips = (parsed.Self and parsed.Self.TailscaleIPs) or {}
-				res = {
-					status = (parsed.BackendState == "Running") and "running"
-					      or (parsed.BackendState == "NeedsLogin") and "logout" or "",
-					version = parsed.Version or "",
-					TUNMode = parsed.TUN or true,
-					health = parsed.Health or "",
-					ipv4 = ips[1] or "No IP assigned",
-					ipv6 = ips[2],
-					domain_name = (parsed.CurrentTailnet and parsed.CurrentTailnet.Name) or "",
-					peers = {}
-				}
-			end
-		end
-	end
-
-	if res then
-		reply(res)
+	local st = ts.get_status()
+	if st then
+		reply(st)
 	else
-		reply(nil, err or translate("Failed to get Tailscale status"))
+		reply(nil, translate("Failed to get Tailscale status"))
 	end
 end
 
@@ -104,7 +67,7 @@ function action_login()
 	local server = http.formvalue("loginserver") or ""
 	local key    = http.formvalue("authkey") or ""
 
-	local st = ubus_call("get_status")
+	local st = ts.get_status()
 	if st and st.status == "running" then
 		reply(nil, translate("Tailscale is already logged in and running"))
 		return
@@ -140,7 +103,7 @@ function action_login()
 end
 
 function action_logout()
-	local res, err = ubus_call("do_logout")
+	local res, err = ts.logout()
 	if res and res.error then
 		reply(nil, res.error)
 	elseif res then
@@ -151,7 +114,7 @@ function action_logout()
 end
 
 function action_firewall()
-	local res, err = ubus_call("setup_firewall")
+	local res, err = ts.setup_firewall()
 	if res and res.error then
 		reply(nil, res.error)
 	elseif res then
